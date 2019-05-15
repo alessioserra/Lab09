@@ -21,7 +21,6 @@ public class Model {
 	
 	private Graph<Country, DefaultEdge> grafo;
 	private Map<Integer, Country> idMap;
-	private Map<Country, Country> backVisit;
 
 	public Model() {
 		idMap = new HashMap<Integer, Country>();
@@ -67,22 +66,15 @@ public class Model {
 	
 	/**
 	 * Metodo per restiutuire la lista degli stati vicini dato uno stato
-	 * (METODO ITERATIVO)
+	 * (DephFirstIterator)
 	 */
 	public List<Country> trovaVicini1(Country partenza) {
 		
 		List<Country> raggiungibili = new ArrayList<Country>();
-		backVisit = new HashMap<>();
 		
-		//Creo iteratore e lo associo al grafo       
+		//CREO ITERATORE E LO ASSOCIO AL GRAFO      
 		//GraphIterator<Fermata, DefaultEdge> it = new BreadthFirstIterator<>(this.grafo,source); //in ampiezza
 		GraphIterator<Country, DefaultEdge> it = new DepthFirstIterator<>(this.grafo,partenza); //in profondita'
-		
-		it.addTraversalListener(new EdgeTraversedListener(backVisit, grafo)); //Questa classe potrebbe essere definita anche dentro la classe Model
-		//A fine iterazione mi ritroverò la mappa back riempita
-		
-		//Devo popolare la mappa almeno col nodo sorgente
-		backVisit.put(partenza, null);
 		
 		while(it.hasNext()) {
 			raggiungibili.add(it.next());
