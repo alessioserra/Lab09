@@ -47,7 +47,6 @@ public class BordersController {
 		
 		for (Country stato : model.getGrafo().vertexSet()) {
 			
-			if (model.getGrafo().degreeOf(stato) > 0)
 			txtResult.appendText(stato.toString()+" -> "+model.getGrafo().degreeOf(stato)+"\n");
 			
 		}
