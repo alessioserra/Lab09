@@ -6,6 +6,7 @@ import java.util.Map;
 
 import org.jgrapht.Graph;
 import org.jgrapht.Graphs;
+import org.jgrapht.alg.ConnectivityInspector;
 import org.jgrapht.generate.GnmRandomBipartiteGraphGenerator;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.SimpleGraph;
@@ -47,7 +48,16 @@ public class Model {
 			if (grafo.degreeOf(c)==0) grafo.removeVertex(c);
 		}
 		
-		System.out.print("GRAFO CREATO\n#VERTICI: "+grafo.vertexSet().size()+"\n#ARCHI: "+grafo.edgeSet().size());
+		System.out.print("GRAFO CREATO\n#VERTICI: "+grafo.vertexSet().size()+"\n#ARCHI: "+grafo.edgeSet().size()+"\n\n");
+	}
+	
+	/**
+	 * Metodo per ottenere il numero di componenti connesse (sottografi connessi) del grafo
+	 * @return #componentiConnesse
+	 */
+	public int getNumComponentiConnesse() {
+		ConnectivityInspector<Country, DefaultEdge> inspector = new ConnectivityInspector<>(grafo);
+		return inspector.connectedSets().size();
 	}
 
 	//GETTERS AND SETTERS
