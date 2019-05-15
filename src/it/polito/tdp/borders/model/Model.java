@@ -1,5 +1,6 @@
 package it.polito.tdp.borders.model;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -9,23 +10,27 @@ import org.jgrapht.Graphs;
 import org.jgrapht.alg.ConnectivityInspector;
 import org.jgrapht.generate.GnmRandomBipartiteGraphGenerator;
 import org.jgrapht.graph.DefaultEdge;
+import org.jgrapht.graph.DefaultWeightedEdge;
 import org.jgrapht.graph.SimpleGraph;
+import org.jgrapht.traverse.DepthFirstIterator;
+import org.jgrapht.traverse.GraphIterator;
 
 import it.polito.tdp.borders.db.BordersDAO;
 
 public class Model {
-
-	public Model() {
-	}
 	
 	private Graph<Country, DefaultEdge> grafo;
 	private Map<Integer, Country> idMap;
+	private Map<Country, Country> backVisit;
+
+	public Model() {
+		idMap = new HashMap<Integer, Country>();
+	}
 	
 	public void creaGrafo(int anno) {
 		
 		//Creo grafo e idMap
 		grafo = new SimpleGraph<>(DefaultEdge.class);
-		idMap = new HashMap<Integer, Country>();
 		
 		//Carico vertici grafo
 		BordersDAO dao = new BordersDAO();
@@ -58,6 +63,33 @@ public class Model {
 	public int getNumComponentiConnesse() {
 		ConnectivityInspector<Country, DefaultEdge> inspector = new ConnectivityInspector<>(grafo);
 		return inspector.connectedSets().size();
+	}
+	
+	/**
+	 * Metodo per restiutuire la lista degli stati vicini dato uno stato
+	 * (METODO ITERATIVO)
+	 */
+	public List<Country> trovaVicini1(Country partenza) {
+		
+		List<Country> raggiungibili = new ArrayList<Country>();
+		backVisit = new HashMap<>();
+		
+		//Creo iteratore e lo associo al grafo       
+		//GraphIterator<Fermata, DefaultEdge> it = new BreadthFirstIterator<>(this.grafo,source); //in ampiezza
+		GraphIterator<Country, DefaultEdge> it = new DepthFirstIterator<>(this.grafo,partenza); //in profondita'
+		
+		it.addTraversalListener(new EdgeTraversedListener(backVisit, grafo)); //Questa classe potrebbe essere definita anche dentro la classe Model
+		//A fine iterazione mi ritroverò la mappa back riempita
+		
+		//Devo popolare la mappa almeno col nodo sorgente
+		backVisit.put(partenza, null);
+		
+		while(it.hasNext()) {
+			raggiungibili.add(it.next());
+		}
+		
+		//Pulisco il primo valore della lista che è lo stato stesso
+		return raggiungibili.subList(1, raggiungibili.size());
 	}
 
 	//GETTERS AND SETTERS

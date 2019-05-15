@@ -1,6 +1,8 @@
 package it.polito.tdp.borders;
 
+import java.io.DataOutput;
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import it.polito.tdp.borders.model.Country;
@@ -67,6 +69,15 @@ public class BordersController {
 
     @FXML
     void doTrovaVicini(ActionEvent event) {
+    	
+    	List<Country> raggiungibili = model.trovaVicini1(comboBox.getValue());
+    	
+    	txtResult.clear();
+    	
+    	txtResult.appendText("#STATI RAGGIUNGIBILI = "+raggiungibili.size()+"\n\n");
+    	for (Country stato : raggiungibili) {
+    		txtResult.appendText(stato.toString()+"\n");
+    	}
 
     }
 
